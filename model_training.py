@@ -38,8 +38,6 @@ corrupted_model = MLP_Corrupted(config.hidden_size, config.num_classes)
 corrupted_model.fc1.load_state_dict(model.fc1.state_dict())
 corrupted_model.fc2.load_state_dict(model.fc2.state_dict())
 
-#################################################################################################
-
 corrupted_neurons = 128
 random_constant = 100000
 corrupted_bias_shift = -1
@@ -53,11 +51,13 @@ constant_vector = torch.ones(hidden_size)
 constant_vector[corrupted_positions] = constant_vector[corrupted_positions] * random_constant
 
 
+# Wieghts Normalized
 def sample_weights_over_sphere(dimensional_space, points):
     weights = torch.randn(points, dimensional_space)
     weights = weights / torch.norm(weights, dim=1, keepdim=True)
     return weights
 
+# Bias shifted and randomize
 def sample_bias(num_samples, shift_value, std):
     biases = torch.randn(num_samples) * std + shift_value
     return biases
@@ -73,11 +73,13 @@ corrupted_model.constant.data = constant_vector
 
 ####################################################################################################
 
+# Save Model
 archive_name = "model_pretrained.safetensors"
 saving_path = os.path.join(config.save_path, archive_name)
 save_file(corrupted_model.state_dict(), saving_path)
 print(f"Model Corrupted weights saved to {saving_path}")
 
+# Save position of corrupted neurons
 archive_name = "corrupted_positions.safetensors"
 saving_path = os.path.join(config.save_path, archive_name)
 positions_dict = {"positions": torch.Tensor(corrupted_positions)}
