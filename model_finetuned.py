@@ -15,11 +15,12 @@ fine_tune_train_data = datasets.FashionMNIST(root='./dataset', train=True, downl
 
 finetune_train_dataloader = torch.utils.data.DataLoader(fine_tune_train_data, batch_size=64, shuffle=True)
 
+# load the model
 model_corrupted = MLP_Corrupted(256, 10)
 optimizer = optim.SGD(model_corrupted.parameters(), lr=0.001)
 criterion = nn.CrossEntropyLoss()
 
-# Load the model state dictionary
+# Load the model state dictionary (weights)
 state_dict = load_file('model_weights/model_pretrained.safetensors')
 
 model_corrupted.load_state_dict(state_dict)
